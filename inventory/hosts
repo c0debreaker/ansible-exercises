@@ -1,0 +1,14 @@
+[ungrouped]
+localhost ansible_connection=local
+
+[dev]
+localhost
+dev-01.example.org ansible_host=10.1.1.2 ansible_connection=local
+dev-02.example.org ansible_host=10.1.1.3 ansible_connection=local
+dev-03.example.org ansible_host=10.1.1.4 ansible_connection=local
+
+[stage]
+localhost
+stage-01.example.org ansible_host=10.1.2.2 ansible_connection=local
+stage-02.example.org ansible_host=10.1.2.3 ansible_connection=local
+stage-03.example.org ansible_host=10.1.2.4 ansible_connection=local

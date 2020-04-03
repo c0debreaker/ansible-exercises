@@ -1,0 +1,7 @@
+- hosts: all
+  gather_facts: no
+  tasks:
+  - debug:
+      var: group_names
+  - debug:
+      var: env

@@ -1,0 +1,8 @@
+---
+- name: variable precedence test
+  hosts: localhost
+  vars_files:
+    - "vars/{{ env }}.yml"
+    - "vars/{{ function }}.yml"
+  tasks:
+    - debug: var=server_memory_size

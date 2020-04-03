@@ -1,0 +1,142 @@
+---
+- hosts: 127.0.0.1
+  # become: yes
+  roles:
+  - apmserver
+  tasks:
+  - name: create a file
+    file:
+      state: touch
+      path: /Users/rcamara/test.txt
+  - name: edit file
+    lineinfile: line="here is some text" path=/Users/rcamara/test.txt
+    register: lif_info
+  - debug: msg="HI THERE {{ lif_info }}"
+
+  - name: Install Amazon Corretto repository
+    yum_repository:
+      name: 'java-11-amazon-corretto-devel'
+      description: 'Java11 Amazon Corretto devel'
+      baseurl: 'https://yum.corretto.aws/corretto.repo'
+      enabled: no
+      gpgcheck: yes
+      gpgkey: 'https://yum.corretto.aws/corretto.key'
+
+    register: corretto_yum_repository
+
+  - name: Install Java11 Amazon Corretto devel package
+    yum:
+      name: java-11-amazon-corretto-devel
+      state: latest
+
+  # - debug: msg="{{ lookup('env','APPLICATION_ENVIRONMENT') | regex_replace('neil') }} is an environment variable"
+  # - debug: {{}}
+  - name: run a command
+      # become: yes
+    file:
+      name: path=/Users/rcamara/test.txt
+      state: absent
+  # - name: Source file and return env vars
+  #   shell: . foo.env
+  #     # {{ ansible_python_interpreter | default('python') }} -c
+  #     # 'from __future__ import print_function; import os, json; print(json.dumps(dict(os.environ)))'
+  #   register: source_env_vars_output
+  - name: check hosts
+    shell: source foo.env && set | grep CLOUD_
+    register: env_contents
+
+  - set_fact:
+      "{{ item.1.split('=')[0]}}" : "{{ item.1.split('=')[1]}}"
+    with_indexed_items:
+      - "{{ env_contents.stdout_lines }}"
+
+  - debug:
+      var: corretto_yum_repository
+
+  - debug:
+      var: CLOUD_ENVIRONMENT
+
+  - debug:
+      var: CLOUD_INSTANCE_ID
+
+  - debug:
+      var: CLOUD_AVAILABILITY_ZONE
+
+  - name: Update CLOUD_ENVIRONMENT_C
+    replace:
+      path: foo.tmp
+      # regexp: '(\s+)?old\.host\.name(\s+.*)?$'
+      regexp: '(.*)\$CLOUD_ENVIRONMENT_C(.*)'
+      replace: '\1{{CLOUD_ENVIRONMENT_C}}\2'
+      backup: no
+
+  - name: Update CLOUD_ENVIRONMENT_P
+    replace:
+      path: foo.tmp
+      # regexp: '(\s+)?old\.host\.name(\s+.*)?$'
+      regexp: '(.*)\$CLOUD_ENVIRONMENT_P(.*)'
+      replace: '\1{{CLOUD_ENVIRONMENT_P}}\2'
+      backup: no
+
+  - name: Update CLOUD_ENVIRONMENT_S
+    replace:
+      path: foo.tmp
+      # regexp: '(\s+)?old\.host\.name(\s+.*)?$'
+      regexp: '(.*)\$CLOUD_ENVIRONMENT_S(.*)'
+      replace: '\1{{CLOUD_ENVIRONMENT_S}}\2'
+      backup: no
+
+  - name: Update CLOUD_ENVIRONMENT
+    replace:
+      path: foo.tmp
+      # regexp: '(\s+)?old\.host\.name(\s+.*)?$'
+      regexp: '(.*)\$CLOUD_ENVIRONMENT(.*)'
+      replace: '\1{{CLOUD_ENVIRONMENT}}\2'
+      backup: no
+
+  - name: Source file and return env vars
+    shell: >
+      . foo.env && set | grep HOME
+    register: source_env_vars_output
+
+  - name: Create var from JSON
+    set_fact:
+      source_env_rc: '{{ source_env_vars_output.rc }}'
+      source_env_cmd: '{{ source_env_vars_output.stdout_lines }}'
+
+  - debug:
+      var: source_env_rc
+  - debug: msg="{{source_env_cmd}}"
+
+  - name: check hosts
+    shell: cat /etc/hosts
+    register: hosts_contents
+
+  - name: echo output
+    shell: echo "hosts contains the word airborne"
+    when: hosts_contents.stdout.find('airborne') != -1
+  - debug:
+      var: hosts_contents.stdout  # - name: Create var from JSON
+    # set_fact:
+    #   source_env_vars: '{{ source_env_vars_output.stdout | from_json }}'
+  # - debug: msg={{ source_env_vars_output.stdout }}
+#  - name: Download from Maven Central
+#    maven_artifact:
+      # group_id: co.elastic.apm
+      # artifact_id: apm-agent-attach
+      # dest: /tmp/apm-agent-attach-1.9.0-standalone.jar
+  # - name: Copy and replace string in file
+  #   copy:
+  #     src: /tmp/nginx.template
+  #     dest: "{{ '$APPLICATION_ENVIRONMENT' | regex_replace('dev') | /tmp/nginx.conf }}"
+  # - name: Copy secure string to /tmp
+  #   copy:
+  #     content: "{{ lookup('aws_ssm', '/the/most/secure/string', region='us-east-1') }}"
+  #     dest: "/tmp/secure_string"
+  #- name: lookup ssm parameter store in the current region
+  #  msg: "{{ lookup('aws_ssm', '/the/most/secure/string', region='us-east-1') }}"
+  # - name: Copy Elastic APM agent startup script
+  #   copy:
+  #     src: startapmagent.sh
+  #     dest: /Users/rcamara/opt/tomcat/bin/startapmagent.sh
+  #     mode: 0755
