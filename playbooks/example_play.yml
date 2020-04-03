@@ -7,10 +7,20 @@
 - name: variable precedence test
   hosts: localhost
   tasks:
-    - debug: var=server_memory_size
-    - debug: var=env
     - include_vars: "vars/{{ env }}.yml"
       when: env is defined
     - include_vars: "vars/{{ function }}.yml"
       when: function is defined
     - debug: var=server_memory_size
+    - debug: var=env
+
+- name: variable precedence test
+  hosts: database
+  tasks:
+    - include_vars: "vars/{{ env }}.yml"
+      when: env is defined
+    - include_vars: "vars/{{ function }}.yml"
+      when: function is defined
+    - debug: var=server_memory_size
+    - debug: var=env
+    - debug: var=function
