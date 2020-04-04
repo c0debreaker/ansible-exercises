@@ -24,3 +24,11 @@
     - debug: var=server_memory_size
     - debug: var=env
     - debug: var=function
+    - debug: var=hdd_space_size
+
+- name: variable precedence test
+  hosts: common
+  tasks:
+    - include_vars: "vars/{{ env }}.yml"
+      when: env is defined
+    - debug: var=hdd_space_size

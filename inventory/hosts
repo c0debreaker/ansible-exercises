@@ -14,3 +14,6 @@ dev-03.example.org ansible_host=10.1.1.4 ansible_connection=local
 
 [database]
 artifactory.build.example.com ansible_host=192.168.1.1 ansible_connection=local
+
+[common]
+localhost
