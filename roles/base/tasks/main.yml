@@ -6,10 +6,11 @@
     path: '{{ tmp_exercise }}'
     state: directory
 
-- tags:
-    - build
+- tags: build
   block:
-    - include_vars: vars/{{ env }}.yml
+    - include_vars: vars/common.yml
+
+    - include_vars: vars/build.yml
       when: env is defined
 
     - name: Create build.json
@@ -18,10 +19,11 @@
         dest: '{{ tmp_exercise }}/build.json'
         mode: '0770'
 
-- tags:
-    - lab
+- tags: lab
   block:
-    - include_vars: vars/{{ env }}.yml
+    - include_vars: vars/common.yml
+
+    - include_vars: vars/lab.yml
       when: env is defined
 
     - name: Create lab.json

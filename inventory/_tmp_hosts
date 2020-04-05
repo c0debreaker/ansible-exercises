@@ -1,0 +1,13 @@
+[ungrouped]
+localhost ansible_connection=local
+
+[lab]
+localhost
+
+[zuild]
+localhost
+
+
+
+[common]
+localhost
