@@ -1,0 +1,23 @@
+- name: Create WORKSPACE directory
+  file:
+    group: 'rcamara'
+    mode: '0755'
+    owner: 'rcamara'
+    path: "{{ tmp_exercise }}"
+    state: directory
+
+- name: Create build.json
+  template:
+    src: common.json.j2
+    dest: "{{ tmp_exercise }}/build.json"
+    mode: 0770
+  tags:
+    - build
+
+- name: Create lab.json
+  template:
+    src: common.json.j2
+    dest: "{{ tmp_exercise }}/lab.json"
+    mode: 0770
+  tags:
+    - lab
