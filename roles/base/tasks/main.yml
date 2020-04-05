@@ -1,23 +1,31 @@
 - name: Create WORKSPACE directory
   file:
-    group: 'rcamara'
+    group: 'staff'
     mode: '0755'
     owner: 'rcamara'
-    path: "{{ tmp_exercise }}"
+    path: '{{ tmp_exercise }}'
     state: directory
 
-- name: Create build.json
-  template:
-    src: common.json.j2
-    dest: "{{ tmp_exercise }}/build.json"
-    mode: 0770
-  tags:
+- tags:
     - build
+  block:
+    - include_vars: vars/{{ env }}.yml
+      when: env is defined
 
-- name: Create lab.json
-  template:
-    src: common.json.j2
-    dest: "{{ tmp_exercise }}/lab.json"
-    mode: 0770
-  tags:
+    - name: Create build.json
+      template:
+        src: common.json.j2
+        dest: '{{ tmp_exercise }}/build.json'
+        mode: '0770'
+
+- tags:
     - lab
+  block:
+    - include_vars: vars/{{ env }}.yml
+      when: env is defined
+
+    - name: Create lab.json
+      template:
+        src: common.json.j2
+        dest: '{{ tmp_exercise }}/lab.json'
+        mode: '0770'
